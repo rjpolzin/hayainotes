@@ -4,6 +4,8 @@
 [![swift](https://img.shields.io/badge/swift-5.9-orange.svg)](https://swift.org)
 [![platform](https://img.shields.io/badge/platform-ios%2017+-blue.svg)](https://developer.apple.com)
 
+---
+
 **hayainotes** is a fast, minimalist note-taking app built with swift and swiftui. it's designed for speed, simplicity, and capturing ideas without distractions.
 
 ## ✨ features
@@ -26,5 +28,5 @@ clone the repository and open it in xcode:
 ```bash
 git clone https://github.com/rjpolzin/hayainotes.git
 cd hayainotes
-open hayainotes.xcodepr
-
+open hayainotes.xcodeproj
+```
