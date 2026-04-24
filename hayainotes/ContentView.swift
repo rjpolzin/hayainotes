@@ -95,13 +95,101 @@ struct ContentView: View {
             .onAppear {
                 if notes.isEmpty && !starterNotesLoaded {
                     modelContext.insert(Note(
-                        title: "Chicken Potato Mushroom Broccoli Soup",
-                        content: "Use-on-hand soup with chicken, potatoes, mushrooms, broccoli, and egg whites added egg-drop style."
+                        title: "Ryan's Old Fashioned Sweet",
+                        content: """
+                    Ingredients
+                    - 2.0 oz Brandy (Central Standard)
+                    - 3 halved orange slices
+                    - 3 Black Cherries (Filthy)
+                    - Angostura Bitters
+                    - Simple Syrup
+                    - 7up soda
+                    - Ice
+
+                    Directions
+                    - Muddle orange, cherry, syrup, bitters
+                    - Add brandy and stir
+                    - Add ice
+                    - Top with 7up
+
+                    Garnish
+                    - Orange slice and cherries on pick
+
+                    Enjoy
+                    """
                     ))
 
                     modelContext.insert(Note(
-                        title: "Ground Meat Potato Skillet",
-                        content: "Ground meat and potato skillet with soy sauce instead of tomato sauce. Drain excess fat before finishing."
+                        title: "Ryan's Old Fashioned Sour",
+                        content: """
+                    Ingredients
+                    - 2.0 oz Brandy (Central Standard)
+                    - 3 halved orange slices
+                    - 3 Black Cherries (Filthy)
+                    - Angostura Bitters
+                    - Simple Syrup
+                    - Squirt soda
+                    - Ice
+
+                    Directions
+                    - Muddle orange, cherry, syrup, bitters
+                    - Add brandy and stir
+                    - Add ice
+                    - Top with 7up
+
+                    Garnish
+                    - Orange slice and cherries on pick
+
+                    Enjoy
+                    """
+                    ))
+                    
+                    modelContext.insert(Note(
+                        title: "Irish Pearl (Irish Old Fashioned)",
+                        content: """
+                    Ingredients
+                    - 2.0 oz Irish Whiskey (Jameson)
+                    - 1.0 oz Amaretto Liquer (Disaronno)
+                    - 3 halved orange slices
+                    - 3 Black Cherries (Filthy)
+                    - Angostura Bitters
+                    - Simple Syrup
+                    - 7up soda
+                    - Ice
+
+                    Directions
+                    - Muddle orange, cherry, syrup, bitters
+                    - Add Whiskey, Amaretto and stir
+                    - Add ice
+                    - Top with Squirt (or 7up for sweet)
+
+                    Garnish
+                    - Orange slice and cherries on pick
+
+                    Enjoy
+                    """
+                    ))
+                    
+                    modelContext.insert(Note(
+                        title: "Sour Patch Midori",
+                        content: """
+                    Ingredients
+                    - 2.0 oz Midori
+                    - 1.0 oz Vodka
+                    - 0.75 oz Lime Juice
+                    - 0.75 oz Lemon Juice
+                    - 0.5 oz Simple Syrup
+                    - Ice
+
+                    Directions
+                    - Shake all ingredients in a Boston Shaker
+                    - Strain and pour over a tub cup of ice
+                    
+                    Garnish
+                    - Sour Patch Kids
+
+                    Enjoy
+                    """
                     ))
 
                     starterNotesLoaded = true
