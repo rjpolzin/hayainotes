@@ -8,6 +8,7 @@ struct ContentView: View {
     @State private var showingNewNoteSheet = false
     @State private var newTitle = ""
     @State private var newContent = ""
+    @State private var starterNotesLoaded = false
 
     var body: some View {
         NavigationStack {
@@ -91,6 +92,21 @@ struct ContentView: View {
                 )
             }
             .navigationBarHidden(true)
+            .onAppear {
+                if notes.isEmpty && !starterNotesLoaded {
+                    modelContext.insert(Note(
+                        title: "Chicken Potato Mushroom Broccoli Soup",
+                        content: "Use-on-hand soup with chicken, potatoes, mushrooms, broccoli, and egg whites added egg-drop style."
+                    ))
+
+                    modelContext.insert(Note(
+                        title: "Ground Meat Potato Skillet",
+                        content: "Ground meat and potato skillet with soy sauce instead of tomato sauce. Drain excess fat before finishing."
+                    ))
+
+                    starterNotesLoaded = true
+                }
+            }
         }
     }
 }
