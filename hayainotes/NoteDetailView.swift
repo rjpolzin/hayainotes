@@ -3,106 +3,119 @@ import SwiftData
 import UIKit
 
 struct NoteDetailView: View {
-    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-
     @Bindable var note: Note
+
     @State private var showingShareSheet = false
 
     var body: some View {
         ZStack {
-            // Dirty gray background
             Color(red: 200/255, green: 200/255, blue: 200/255)
                 .ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                // Custom header with Save and Cancel buttons
-                HStack {
-                    Button(action: { dismiss() }) {
-                        Text("Cancel")
-                            .font(.system(size: 16, weight: .bold, design: .monospaced))
-                            .foregroundColor(.white)
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 16)
-                            .background(Color(red: 153/255, green: 0/255, blue: 51/255))
-                            .cornerRadius(20)
-                            .shadow(radius: 5)
-                    }
-
-                    Spacer()
-
-                    Button(action: { dismiss() }) {
-                        Text("Save")
-                            .font(.system(size: 16, weight: .bold, design: .monospaced))
-                            .foregroundColor(.white)
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 16)
-                            .background(Color(red: 153/255, green: 0/255, blue: 51/255))
-                            .cornerRadius(20)
-                            .shadow(radius: 5)
-                    }
-                    .disabled(note.title.isEmpty || note.content.isEmpty)
-                }
-                .padding()
-                .background(Color(red: 200/255, green: 200/255, blue: 200/255))
-
+            VStack {
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 20) {
-                        Text("Title")
-                            .font(.headline)
-                            .padding(.horizontal)
+                    VStack(alignment: .leading, spacing: 24) {
 
-                        ZStack {
-                            Color(red: 224/255, green: 240/255, blue: 141/255)
-                                .cornerRadius(8)
-                                .shadow(radius: 1)
+                        Text("TITLE")
+                            .font(.system(size: 28, weight: .bold, design: .monospaced))
+                            .foregroundColor(Color(red: 0/255, green: 38/255, blue: 89/255))
 
-                            TextField("Title", text: $note.title)
-                                .foregroundColor(.black)
-                                .padding(8)
-                                .background(Color.clear)
-                        }
-                        .padding(.horizontal)
+                        TextField("Enter title", text: $note.title)
+                            .padding()
+                            .background(Color(red: 224/255, green: 240/255, blue: 141/255))
+                            .cornerRadius(14)
+                            .font(.system(size: 22))
 
-                        Text("Content")
-                            .font(.headline)
-                            .padding(.horizontal)
+                        Text("CONTENT")
+                            .font(.system(size: 28, weight: .bold, design: .monospaced))
+                            .foregroundColor(Color(red: 0/255, green: 38/255, blue: 89/255))
 
                         GreenTextEditor(text: $note.content)
-                            .frame(height: 200)
-                            .padding(.horizontal)
+                            .frame(height: 380)
                     }
-                    .padding(.vertical)
+                    .padding()
                 }
-                .scrollContentBackground(.hidden)
+
+                Spacer()
+
+                HStack(spacing: 34) {
+
+                    BottomActionButton(
+                        icon: "xmark",
+                        label: "CANCEL",
+                        bg: Color(red: 153/255, green: 0/255, blue: 51/255)
+                    ) {
+                        dismiss()
+                    }
+
+                    BottomActionButton(
+                        icon: "paperplane.fill",
+                        label: "SEND",
+                        bg: Color(red: 0/255, green: 38/255, blue: 89/255)
+                    ) {
+                        showingShareSheet = true
+                    }
+
+                    BottomActionButton(
+                        icon: "checkmark",
+                        label: "SAVE",
+                        bg: Color(red: 153/255, green: 0/255, blue: 51/255)
+                    ) {
+                        dismiss()
+                    }
+                }
+                .padding(.bottom, 24)
             }
         }
-        .navigationBarHidden(true) // Hide the default nav bar to show custom header
+        .navigationBarHidden(true)
         .sheet(isPresented: $showingShareSheet) {
-            ActivityView(activityItems: [shareText()])
+            ActivityView(activityItems: ["\(note.title)\n\n\(note.content)"])
         }
-        .colorScheme(.light)
-    }
-
-    private func shareText() -> String {
-        "\(note.title)\n\n\(note.content)"
     }
 }
 
-// UIKit wrapper for UITextView with custom muted green background
+struct BottomActionButton: View {
+    let icon: String
+    let label: String
+    let bg: Color
+    let action: () -> Void
+
+    var body: some View {
+        VStack(spacing: 8) {
+            Button(action: action) {
+                Image(systemName: icon)
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundColor(.blue)
+                    .frame(width: 70, height: 70)
+                    .background(bg)
+                    .clipShape(Circle())
+                    .shadow(radius: 8)
+            }
+
+            Text(label)
+                .font(.system(size: 18, weight: .bold, design: .monospaced))
+                .foregroundColor(Color(red: 0/255, green: 38/255, blue: 89/255))
+        }
+    }
+}
+
 struct GreenTextEditor: UIViewRepresentable {
     @Binding var text: String
 
     func makeUIView(context: Context) -> UITextView {
-        let textView = UITextView()
-        textView.backgroundColor = UIColor(red: 224/255, green: 240/255, blue: 141/255, alpha: 1)
-        textView.font = UIFont.monospacedSystemFont(ofSize: 17, weight: .regular)
-        textView.delegate = context.coordinator
-        textView.isScrollEnabled = true
-        textView.layer.cornerRadius = 8
-        textView.layer.masksToBounds = true
-        textView.textColor = UIColor.black
-        return textView
+        let tv = UITextView()
+        tv.backgroundColor = UIColor(
+            red: 224/255,
+            green: 240/255,
+            blue: 141/255,
+            alpha: 1
+        )
+        tv.font = UIFont.monospacedSystemFont(ofSize: 20, weight: .regular)
+        tv.textColor = .black
+        tv.layer.cornerRadius = 14
+        tv.delegate = context.coordinator
+        return tv
     }
 
     func updateUIView(_ uiView: UITextView, context: Context) {
@@ -128,15 +141,19 @@ struct GreenTextEditor: UIViewRepresentable {
     }
 }
 
-// UIKit wrapper for share sheet
 struct ActivityView: UIViewControllerRepresentable {
     let activityItems: [Any]
-    let applicationActivities: [UIActivity]? = nil
 
-    func makeUIViewController(context: Context) -> UIActivityViewController {
-        UIActivityViewController(activityItems: activityItems, applicationActivities: applicationActivities)
+    func makeUIViewController(context: Context)
+    -> UIActivityViewController {
+        UIActivityViewController(
+            activityItems: activityItems,
+            applicationActivities: nil
+        )
     }
 
-    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
+    func updateUIViewController(
+        _ uiViewController: UIActivityViewController,
+        context: Context
+    ) {}
 }
-

@@ -8,80 +8,69 @@ struct ContentView: View {
     @State private var showingNewNoteSheet = false
     @State private var newTitle = ""
     @State private var newContent = ""
-    @State private var starterNotesLoaded = false
 
     var body: some View {
         NavigationStack {
             ZStack {
-                // Dirty gray background covering entire screen
                 Color(red: 200/255, green: 200/255, blue: 200/255)
                     .ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    // Custom header
+
                     CustomHeaderView()
-                        .frame(height: 80)
+                        .frame(height: 85)
 
                     if notes.isEmpty {
                         Spacer()
-                        VStack {
-                            Text("No notes yet")
-                                .font(.system(.title2, design: .monospaced))
-                                .foregroundColor(Color.black.opacity(0.6))
-                            Text("Tap the + button to create one.")
-                                .font(.system(.body, design: .monospaced))
-                                .foregroundColor(Color.black.opacity(0.5))
-                        }
+
+                        Text("NO NOTES YET")
+                            .font(.system(size: 22, weight: .bold, design: .monospaced))
+                            .foregroundColor(.black.opacity(0.5))
+
                         Spacer()
                     } else {
-                        List {
-                            ForEach(notes) { note in
-                                NavigationLink(destination: NoteDetailView(note: note)) {
-                                    NoteCard(note: note)
+                        ScrollView {
+                            VStack(spacing: 18) {
+                                ForEach(notes) { note in
+                                    NavigationLink(destination: NoteDetailView(note: note)) {
+                                        NoteCard(note: note)
+                                    }
+                                    .buttonStyle(.plain)
                                 }
                             }
-                            .onDelete { indexSet in
-                                for index in indexSet {
-                                    let note = notes[index]
-                                    modelContext.delete(note)
-                                }
-                            }
+                            .padding(.top, 16)
+                            .padding(.bottom, 120)
                         }
-                        .listStyle(PlainListStyle())
-                        .scrollContentBackground(.hidden)
-                        .background(Color.clear)           // Clear default list background
-                        .scrollContentBackground(.hidden)  // Hide scrollview background
                     }
                 }
 
-                // Floating + button
                 VStack {
                     Spacer()
+
                     HStack {
                         Spacer()
-                        VStack(spacing: 4) {
+
+                        VStack(spacing: 6) {
                             Button(action: {
                                 showingNewNoteSheet = true
                             }) {
                                 Image(systemName: "plus")
-                                    .font(.system(size: 36))
+                                    .font(.system(size: 36, weight: .bold))
                                     .foregroundColor(.blue)
-                                    .padding()
-                                    .background(Color(red: 153/255, green: 0/255, blue: 51/255)) // purple-red
+                                    .frame(width: 88, height: 88)
+                                    .background(Color(red: 153/255, green: 0/255, blue: 51/255))
                                     .clipShape(Circle())
-                                    .shadow(radius: 10)
+                                    .shadow(radius: 8)
                             }
+
                             Text("ADD")
-                                .font(.system(size: 18, weight: .bold, design: .monospaced))
-                                .foregroundColor(Color(red: 0/255, green: 38/255, blue: 77/255))
+                                .font(.system(size: 20, weight: .bold, design: .monospaced))
+                                .foregroundColor(Color(red: 0/255, green: 38/255, blue: 89/255))
                         }
-                        .padding(.bottom, 20) // Move button up a bit
-                        .padding(.trailing, 30)
+                        .padding(.trailing, 26)
+                        .padding(.bottom, 18)
                     }
                 }
-                RoundedRectangle(cornerRadius: 60)
-                    .stroke(Color.white, lineWidth: 6)
-                    .ignoresSafeArea()
             }
             .sheet(isPresented: $showingNewNoteSheet) {
                 NewNoteSheet(
@@ -92,133 +81,36 @@ struct ContentView: View {
                 )
             }
             .navigationBarHidden(true)
-            .onAppear {
-                if notes.isEmpty && !starterNotesLoaded {
-                    modelContext.insert(Note(
-                        title: "Ryan's Old Fashioned Sweet",
-                        content: """
-                    Ingredients
-                    - 2.0 oz Brandy (Central Standard)
-                    - 3 halved orange slices
-                    - 3 Black Cherries (Filthy)
-                    - Angostura Bitters
-                    - Simple Syrup
-                    - 7up soda
-                    - Ice
-
-                    Directions
-                    - Muddle orange, cherry, syrup, bitters
-                    - Add brandy and stir
-                    - Add ice
-                    - Top with 7up
-
-                    Garnish
-                    - Orange slice and cherries on pick
-
-                    Enjoy
-                    """
-                    ))
-
-                    modelContext.insert(Note(
-                        title: "Ryan's Old Fashioned Sour",
-                        content: """
-                    Ingredients
-                    - 2.0 oz Brandy (Central Standard)
-                    - 3 halved orange slices
-                    - 3 Black Cherries (Filthy)
-                    - Angostura Bitters
-                    - Simple Syrup
-                    - Squirt soda
-                    - Ice
-
-                    Directions
-                    - Muddle orange, cherry, syrup, bitters
-                    - Add brandy and stir
-                    - Add ice
-                    - Top with 7up
-
-                    Garnish
-                    - Orange slice and cherries on pick
-
-                    Enjoy
-                    """
-                    ))
-                    
-                    modelContext.insert(Note(
-                        title: "Irish Pearl (Irish Old Fashioned)",
-                        content: """
-                    Ingredients
-                    - 2.0 oz Irish Whiskey (Jameson)
-                    - 1.0 oz Amaretto Liquer (Disaronno)
-                    - 3 halved orange slices
-                    - 3 Black Cherries (Filthy)
-                    - Angostura Bitters
-                    - Simple Syrup
-                    - 7up soda
-                    - Ice
-
-                    Directions
-                    - Muddle orange, cherry, syrup, bitters
-                    - Add Whiskey, Amaretto and stir
-                    - Add ice
-                    - Top with Squirt (or 7up for sweet)
-
-                    Garnish
-                    - Orange slice and cherries on pick
-
-                    Enjoy
-                    """
-                    ))
-                    
-                    modelContext.insert(Note(
-                        title: "Sour Patch Midori",
-                        content: """
-                    Ingredients
-                    - 2.0 oz Midori
-                    - 1.0 oz Vodka
-                    - 0.75 oz Lime Juice
-                    - 0.75 oz Lemon Juice
-                    - 0.5 oz Simple Syrup
-                    - Ice
-
-                    Directions
-                    - Shake all ingredients in a Boston Shaker
-                    - Strain and pour over a tub cup of ice
-                    
-                    Garnish
-                    - Sour Patch Kids
-
-                    Enjoy
-                    """
-                    ))
-
-                    starterNotesLoaded = true
-                }
-            }
         }
     }
 }
 
 struct NoteCard: View {
-    var note: Note
+    let note: Note
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 8) {
+
             Text(note.title)
-                .font(.system(.headline, design: .monospaced))
+                .font(.system(size: 18, weight: .bold, design: .monospaced))
                 .foregroundColor(.black)
+                .lineLimit(2)
+
             Text(note.content)
-                .font(.system(.body, design: .monospaced))
-                .foregroundColor(.black.opacity(0.8))
-                .lineLimit(1)  // Limit content to 1 line
+                .font(.system(size: 16, design: .monospaced))
+                .foregroundColor(.black.opacity(0.7))
+                .lineLimit(2)
         }
-        .padding(10)
-        .frame(maxWidth: 400)
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(red: 224/255, green: 240/255, blue: 141/255))
-        .border(Color.black, width: 2)
-        .cornerRadius(20)
-        .shadow(color: Color.black.opacity(0.1), radius: 1, x: 1, y: 1)
-        .frame(maxWidth: .infinity)
+        .overlay(
+            RoundedRectangle(cornerRadius: 18)
+                .stroke(Color.black, lineWidth: 2)
+        )
+        .cornerRadius(18)
+        .shadow(radius: 4)
+        .padding(.horizontal, 18)
     }
 }
 
@@ -226,15 +118,12 @@ struct CustomHeaderView: View {
     var body: some View {
         ZStack {
             Color(red: 200/255, green: 200/255, blue: 200/255)
-                .edgesIgnoringSafeArea(.top)
+
             Text("HAYAI Notes")
-                .font(.custom("PressStart2P-Regular", size: 36))
-                .foregroundColor(Color(red: 0/255, green: 38/255, blue: 77/255))
-                .kerning(-1)
-                .shadow(color: Color.black.opacity(0.6), radius: 2, x: 1, y: 1)
-                .padding(.top, 30)
+                .font(.system(size: 34, weight: .bold, design: .monospaced))
+                .foregroundColor(Color(red: 0/255, green: 38/255, blue: 89/255))
+                .shadow(radius: 4)
         }
-        .frame(maxWidth: .infinity)
     }
 }
 
@@ -244,48 +133,115 @@ struct NewNoteSheet: View {
     @Binding var newContent: String
     var modelContext: ModelContext
 
+    @State private var showingShareSheet = false
+
     var body: some View {
         ZStack {
-            // Dirty gray background
             Color(red: 200/255, green: 200/255, blue: 200/255)
                 .ignoresSafeArea()
 
-            NavigationStack {
-                Form {
-                    Section(header: Text("Title")) {
+            VStack {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 24) {
+
+                        Text("TITLE")
+                            .font(.system(size: 28, weight: .bold, design: .monospaced))
+                            .foregroundColor(Color(red: 0/255, green: 38/255, blue: 89/255))
+
                         TextField("Enter title", text: $newTitle)
-                            .font(.system(.body, design: .monospaced))
-                    }
-                    Section(header: Text("Content")) {
+                            .padding()
+                            .background(Color(red: 224/255, green: 240/255, blue: 141/255))
+                            .cornerRadius(14)
+                            .font(.system(size: 22, design: .monospaced))
+                            .foregroundColor(.black)
+
+                        Text("CONTENT")
+                            .font(.system(size: 28, weight: .bold, design: .monospaced))
+                            .foregroundColor(Color(red: 0/255, green: 38/255, blue: 89/255))
+
                         TextEditor(text: $newContent)
-                            .frame(height: 150)
-                            .font(.system(.body, design: .monospaced))
+                            .font(.system(size: 20, design: .monospaced))
+                            .foregroundColor(.black)
+                            .scrollContentBackground(.hidden)
+                            .padding()
+                            .frame(height: 380)
+                            .background(Color(red: 224/255, green: 240/255, blue: 141/255))
+                            .cornerRadius(14)
                     }
+                    .padding()
                 }
-                .navigationTitle("New Note")
-                .toolbar {
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("Save") {
+
+                Spacer()
+
+                HStack(spacing: 34) {
+
+                    VStack(spacing: 8) {
+                        Button(action: {
+                            showingNewNoteSheet = false
+                            newTitle = ""
+                            newContent = ""
+                        }) {
+                            Image(systemName: "xmark")
+                                .font(.system(size: 24, weight: .bold))
+                                .foregroundColor(.blue)
+                                .frame(width: 70, height: 70)
+                                .background(Color(red: 153/255, green: 0/255, blue: 51/255))
+                                .clipShape(Circle())
+                                .shadow(radius: 8)
+                        }
+
+                        Text("CANCEL")
+                            .font(.system(size: 18, weight: .bold, design: .monospaced))
+                            .foregroundColor(Color(red: 0/255, green: 38/255, blue: 89/255))
+                    }
+
+                    VStack(spacing: 8) {
+                        Button(action: {
+                            showingShareSheet = true
+                        }) {
+                            Image(systemName: "paperplane.fill")
+                                .font(.system(size: 24, weight: .bold))
+                                .foregroundColor(.white)
+                                .frame(width: 70, height: 70)
+                                .background(Color(red: 0/255, green: 38/255, blue: 89/255))
+                                .clipShape(Circle())
+                                .shadow(radius: 8)
+                        }
+
+                        Text("SEND")
+                            .font(.system(size: 18, weight: .bold, design: .monospaced))
+                            .foregroundColor(Color(red: 0/255, green: 38/255, blue: 89/255))
+                    }
+
+                    VStack(spacing: 8) {
+                        Button(action: {
                             let newNote = Note(title: newTitle, content: newContent)
                             modelContext.insert(newNote)
-                            showingNewNoteSheet = false
-                            newTitle = ""
-                            newContent = ""
-                        }
-                        .disabled(newTitle.isEmpty || newContent.isEmpty)
-                    }
 
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("Cancel") {
                             showingNewNoteSheet = false
                             newTitle = ""
                             newContent = ""
+                        }) {
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 24, weight: .bold))
+                                .foregroundColor(.blue)
+                                .frame(width: 70, height: 70)
+                                .background(Color(red: 153/255, green: 0/255, blue: 51/255))
+                                .clipShape(Circle())
+                                .shadow(radius: 8)
                         }
+
+                        Text("SAVE")
+                            .font(.system(size: 18, weight: .bold, design: .monospaced))
+                            .foregroundColor(Color(red: 0/255, green: 38/255, blue: 89/255))
                     }
                 }
-                .colorScheme(.light)
+                .padding(.bottom, 28)
             }
         }
+        .sheet(isPresented: $showingShareSheet) {
+            ActivityView(activityItems: ["\(newTitle)\n\n\(newContent)"])
+        }
+        .colorScheme(.light)
     }
 }
-
